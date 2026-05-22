@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PharmaCart</title>
+
+<style>
+body { margin:0; font-family: 'Segoe UI', Arial,sans-serif; background:#fff8f6; color: #2d3436; }
+.header { background:white; padding:14px 20px; display: flex; align-items:center; justify-content: center; position: relative; border-bottom: 1px solid #eee }
+.header-center { text-align: center; }
+.header-right { position: absolute; right: 16px; }
+.page { display:none; padding:15px; }
+.product-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.product-card { background:white; border-radius:10px; padding:12px; text-align:center; cursor:pointer; transition:transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+.product-card:hover { transform:scale(1.03); }
+
+.product-card img { width:100%; height:140px; object-fit:contain; background: #f0f0f0; border-radius:6px; }
+.product-card p {margin-top: 8px; font-weight: 600; font-size:15px; color: #333;}
+.hero { margin: 14px 0 20px; }
+.box {
+  background: linear-gradient(135deg, #ff5722 0%, #ff8a65 100%);
+  border:none
+}
+.hero-title{
+  font-size:40px;
+  font-weight:700;
+  letter-spacing:1.2px;
+  line-height:1.2;
+  color:#1a1a1a;
+  margin-top:20px;
+  margin-bottom:6px;
+  text-wrap:balance;
+}
+.hero-sub{
+  font-size:22px;
+  font-weight:500;
+  font-style:italic;
+  opacity:0.85;
+  margin-top:0px;
+}
+.hero-desc{
+  font-size:20px;
+  font-weight:400;
+  line-height:1.6;
+  color:#555;
+  margin-top:16px;
+  color:#2f2f2f;
+}
+
+
+/* ===== LOGO ===== */
+
+.logo {
+  height: 75px;
+  object-fit: contain;
+}
+
+
+/* ===== CART BUTTON ===== */
+
+.cart-btn {
+  background: #ffe6de;
+  border: none;
+  font-size: 26px;
+  cursor: pointer;
+  position: relative;
+}
+
+
+.cart-count {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ff5722;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 12px;
+  min-width: 18px;
+  text-align: center;
+}
+
+button { padding:10px 14px; width:auto; background:#ff5722; color:white; border:none; border-radius:6px; font-size:16px; margin-top:10px; cursor:pointer; }
+button.secondary { background:#777; }
+
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: white;
+  padding: 14px 16px;
+  border-radius: 12px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.cart-item img {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #ff5722;
+  padding: 8px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cart-item img:hover {
+  transform: scale(1.15); /* Membesar 15% */
+  box-shadow: 0 5px 15px rgba(255, 87, 34, 0.2); /* Tambah bayangan lembut warna tema */
+  z-index: 1; /* Pastikan gambar membesar di atas elemen lain */
+}
+
+.cart-info {
+  flex: 1;
+}
+
+.cart-name {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+/* Delete Button */
+.delete-btn {
+  background: #ffe5e0;
+  border: none;
+  color: #ff5722;
+  font-size: 18px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;           /* Guna flexbox */
+  align-items: center;     /* Mengetengahkan secara menegak */
+  justify-content: center;   /* Mengetengahkan secara mendatar */
+  padding: 0;              /* Buang sebarang padding lalai */
+  line-height: 0;          /* Matikan ketinggian baris teks */
+}
+
+.delete-btn:hover {
+  background: #ff5722;
+  color: white;
+  transform: scale(1.1);
+}
+
+.score-big { font-size:64px; font-weight:bold; text-align:center; margin:20px 0; }
+
+#reviewList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.review-card {
+  background: white;
+  border-left: 8px solid #ccc; /* Garisan tepi ikut warna status */
+  border-radius: 10px;
+  padding: 15px 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  text-align: left;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.review-name {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.review-body {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.4;
+}
+
+/* Warna ikut kategori */
+.status-safe { border-left-color: #4CAF50; background: #f1f8e9; }
+.status-warning { border-left-color: #FF9800; background: #fff3e0; }
+.status-danger { border-left-color: #f44336; background: #ffebee; }
+
+#detailName { font-size: 22px; font-weight: bold; margin-bottom: 12px; }
+#detailDesc { background: white; padding: 12px; border-radius: 8px; font-size: 15px; line-height: 1.5; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+#resultMessage {font-size: 18px; text-align: center; line-height: 1.6; }
+
+.result-title {
+  font-size: 32px;      /* Besarkan saiz ikut kesesuaian */
+  font-weight: 800;     /* Bagi nampak tebal dan bold */
+  color: #333;          /* Warna kelap gelap */
+  text-transform: uppercase; 
+  margin-bottom: 20px;
+  letter-spacing: 1px;  /* Jarakkan sikit huruf bagi nampak premium */
+  border-bottom: 4px solid #ff5722; /* Garisan oren bawah tajuk */
+  display: inline-block;            /* Supaya garisan tu tak panjang sampai hujung */
+  padding-bottom: 5px;
+}
+
+.result-card {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 40px auto;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.score-container {
+  padding: 20px 0;
+}
+
+.score-big {
+  font-size: 80px; /* Besarkan lagi skor */
+  margin: 10px 0;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+}
+
+.result-msg {
+  font-size: 18px;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 25px;
+  line-height: 1.6;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column; /* Butang susun atas bawah untuk mobile-friendly */
+  gap: 12px;
+}
+
+.btn-review {
+  background: #ff5722;
+  font-weight: bold;
+  padding: 15px !important;
+}
+
+.detail-container {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Tajuk produk */
+.detail-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+/* Grid produk */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Panel gambar */
+.detail-left {
+  background: #ffe6de;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+}
+
+.detail-left img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+/* Panel info */
+.detail-right {
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 16px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Butang */
+.detail-buttons {
+  margin-top: 16px;
+  display: flex;
+  gap: 10px;
+}
+
+.detail-buttons button {
+  width: auto;
+  padding: 12px 18px;
+  font-size: 16px;
+}
+
+/* =========================================
+   MOBILE RESPONSIVE (Untuk Skrin Kecil)
+   ========================================= */
+
+@media (max-width: 600px) {
+  /* 1. Kemaskan Header */
+  .header {
+    padding: 10px;
+    justify-content: space-between; /* Logo tengah, Cart kanan */
+  }
+
+  .logo {
+    height: 45px; /* Kecilkan logo supaya tak makan ruang */
+  }
+
+  .cart-btn {
+    font-size: 18px;
+    padding: 6px 10px;
+  }
+
+  /* 2. Besarkan saiz butang untuk senang ditekan jari */
+  button {
+    width: 100%; /* Butang jadi lebar penuh pada mobile */
+    padding: 14px;
+    font-size: 18px;
+  }
+
+  /* 3. Detail Page: Tukar gambar kat atas, info kat bawah */
+  .detail-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .detail-left img {
+    max-height: 220px;
+  }
+
+  .detail-buttons {
+    flex-direction: column; /* Butang susun atas bawah */
+  }
+
+  /* 4. Result Card: Kecilkan sikit saiz font skor */
+  .score-big {
+    font-size: 60px;
+  }
+
+  .result-title {
+    font-size: 24px;
+  }
+
+  /* 5. Cart Item: Bagi nampak lebih kemas */
+  .cart-item {
+    padding: 10px;
+  }
+
+  .cart-item img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .cart-name {
+    font-size: 14px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  
+  <div class="header-center">
+    <img src="image/logo.png" alt="PharmaCart Logo" class="logo">
+  </div>
+
+ 
+
+  <div class="header-right">
+    <button class="cart-btn" onclick="goTo('cart')">
+      🛒 
+  <span id="cartCount" class="cart-count">0</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- HOME -->
+<div id="home" class="page hero box">
+  <h1 class="hero-title">SELAMAT DATANG KE PHARMACART</h1>
+  <p class="hero-sub">“Bijak Membeli, Kesihatan Terjamin”</p> 
+  <p class="hero-desc">Pilih produk berdaftar dan kosmetik bernotifikasi yang boleh dibeli secara dalam talian sebelum checkout.</p>
+  <div class="product-grid" id="productList"></div>
+</div>
+
+
+<!-- DETAIL -->
+<div id="detail" class="page">
+
+  <div class="detail-container">
+
+    <div id="detailName" class="detail-title"></div>
+
+    <div class="detail-grid">
+
+      <div class="detail-left">
+        <img id="detailImg">
+      </div>
+
+      <div>
+
+        <div id="detailDesc" class="detail-right"></div>
+
+        <div class="detail-buttons">
+          <button onclick="addToCart()">Add to Cart</button>
+          <button class="secondary" onclick="goTo('home')">Kembali</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- CART -->
+<div id="cart" class="page">
+  <h2>CART ANDA 🛒</h2>
+  <div id="cartList"></div>
+  <button id="checkoutBtn" onclick="calculateScore()">Checkout</button>
+  <button class="secondary" onclick="goTo('home')">Home</button>
+</div>
+
+<!-- RESULT -->
+<div id="result" class="page">
+  <div class="result-card">
+    <h2>KEPUTUSAN ANDA</h2>
+    <hr>
+    <div class="score-container">
+      <div class="score-big" id="scoreText"></div>
+      <p id="resultMessage" class="result-msg"></p>
+    </div>
+    
+    <div class="action-buttons">
+      <button class="btn-review" onclick="goTo('review')">🔍 Semak Produk</button>
+      <button class="secondary" onclick="resetGame(); goTo('home')">🔄 Main Semula</button>
+    </div>
+  </div>
+</div>
+
+<!-- REVIEW -->
+<div id="review" class="page">
+  <h2>SEMAKAN PRODUK</h2>
+  <div id="reviewList"></div>
+  <button onclick="resetGame(); goTo('home')">Home</button>
+</div>
+
+<script>
+
+const products = [
+  {id:1, name:"Ubat Batuk CoughFree+", isSafe:true, desc:`Kegunaan : Untuk melegakan batuk dan menghilangkan kahak\n• Nombor pendaftaran MAL20234516T disahkan\n• Ada hologram keselamatan tulen\n• Label produk lengkap dan jelas`, img:"image/product1.png"},
+  {id:2, name:"Ubat Demam FeverLess", isSafe:true, desc:`Kegunaan : Untuk melegakan demam\n• Nombor pendaftaran MAL20237891X disahkan\n• Ada hologram keselamatan tulen\n• Label lengkap dan arahan penggunaan jelas`, img:"image/product2.png"},
+  {id:3, name:"Ubat Tahan Sakit PainGo", isSafe:false, desc:`Kegunaan : Melegakan sakit.\n• Racun berjadual dengan Nombor pendaftaran MAL20231231A\n• Tarikh luput dipamerkan pada label\n• Bahan aktif dinyatakan`, img:"image/product3.png"},
+  {id:4, name:"Ubat Alergi AllerStop", isSafe:false, desc:`Kegunaan: Hilangkan alergi kurang dari 1 jam\n• Tiada nombor pendaftaran MAL yang sah\n• Tiada hologram keselamatan\n• Testimoni Overclaim`, img:"image/product4.png"},
+  {id:5, name:"Salap Luka HealFast", isSafe:true, desc:`Kegunaan : Merawat luka kecil dan calar.\n• Nombor pendaftaran MAL20235583X disahkan\n• Ada hologram keselamatan tulen\n• Label lengkap`, img:"image/product5.png"},
+  {id:6, name:"Krim Gatal DermaCare", isSafe:true, desc:`Kegunaan : Untuk masalah kulit ringan.\n• Nombor notifikasi NOT123446789K disahkan\n• Maklumat pengilang lengkap\n• Tiada tuntutan melampau`, img:"image/product6.png"},
+  {id:7, name:"Krim Pencuci Muka SkinGlow Pro", isSafe:false, desc:`Kegunaan : Mencuci dan menyegarkan kulit\n• Tiada nombor notifikasi NOT yang sah\n• Tiada maklumat pengilang\n• Tagline produk : Sekali calit, putih setahun`, img:"image/product7.png"},
+  {id:8, name:"Pil Kurus SlimMaxx", isSafe:false, desc:`Kegunaan : Menurunkan berat badan secara efektif\n• Tiada nombor pendaftaran MAL yang sah\n• Penjualan hanya secara atas talian\n• PM admin untuk maklumat lanjut`, img:"image/product8.png"},
+  {id:9, name:"Vitamin C 1000mg Tablet", isSafe:true, desc:`Kegunaan : Untuk kesihatan umum\n• Nombor pendaftaran MAL20265583N disahkan\n• Tidak membuat tuntutan kesihatan berlebihan\n• Ada hologram keselamatan tulen`, img:"image/product9.png"},
+  {id:10, name:"Ubat Kuat Lelaki PowerMan Plus", isSafe:false, desc:`Kegunaan: Meningkatkan kekuatan dalaman lelaki\n• Tiada nombor pendaftaran yang sah\n• Tiada hologram keselamatan\n• 100% Tiada kesan sampingan`, img:"image/product10.png"}
+];
+
+let cart = [];
+let selectedProduct = null;
+
+function loadHome() {
+  const list = document.getElementById("productList");
+  list.innerHTML="";
+  products.forEach(p=>{
+    list.innerHTML+=`
+      <div class="product-card" onclick="openDetail(${p.id})">
+        <img src="${p.img}">
+        <p>${p.name}</p>
+      </div>`;
+  });
+}
+
+function openDetail(id){
+  selectedProduct = products.find(p=>p.id===id);
+  document.getElementById("detailName").innerText = selectedProduct.name;
+  document.getElementById("detailImg").src = selectedProduct.img;
+  document.getElementById("detailDesc").innerHTML = 
+  formatDesc(selectedProduct.desc);;
+  goTo('detail');
+}
+
+function addToCart(){
+  if(!cart.includes(selectedProduct)) cart.push(selectedProduct);
+  updateCartCount();
+  goTo('home');
+}
+
+function updateCartCount(){
+  const el = document.getElementById("cartCount");
+  if(el) el.innerText = cart.length;
+}
+
+function removeItem(index){
+  cart.splice(index, 1); 
+  updateCartCount();     
+  loadCart();            
+}
+
+function loadCart(){
+  const list = document.getElementById("cartList");
+  const btn = document.getElementById("checkoutBtn"); 
+  list.innerHTML = "";
+
+  if (cart.length < 5) {
+    list.innerHTML = "<p style='text-align:center; color:#888;'>Sila pilih sekurang-kurangnya 5 item untuk checkout.</p>";
+    btn.disabled = true;       
+    btn.style.opacity = "0.5"; 
+    btn.style.cursor = "not-allowed";
+  } else {
+    btn.disabled = false;      
+    btn.style.opacity = "1";   
+    btn.style.cursor = "pointer";
+  }
+
+  cart.forEach((c, index) => {
+    list.innerHTML += `
+      <div class="cart-item">
+        <img src="${c.img}" alt="${c.name}">
+        <div class="cart-info">
+          <div class="cart-name">${c.name}</div>
+        </div>
+        <button class="delete-btn" onclick="removeItem(${index})">✖</button>
+      </div>
+    `;
+  });
+}
+
+function formatDesc(desc){
+
+  return desc
+    // Tukar newline jadi <br>
+    .replace(/\n/g, "<br>")
+
+    // Bold semua nombor MAL (contoh: MAL20234516T)
+    .replace(/\b(MAL\d+[A-Z]?)\b/g, "<strong>$1</strong>")
+
+    // Bold semua perkataan (tidak|ada) (case insensitive)
+    .replace(/\b((tiada|ada|kegunaan))\b/gi, "<strong>$1</strong>");
+}
+
+function calculateScore(){
+  let score=0;
+  cart.forEach(c=>{
+    switch(c.id){
+      case 1: case 2: case 5: case 6: case 9: score+=1; break;
+      case 3: case 4: case 7: case 8: case 10: score+=-1; break;
+    }
+  });
+
+  const scoreTextEl = document.getElementById("scoreText");
+  scoreTextEl.innerText = score + " / 5";
+  scoreTextEl.style.color = score > 0 ? "green" : score===0 ? "orange" : "red";
+
+  let message="";
+  if(score===5) message="🏆 TAHNIAH! Anda pengguna sangat bijak!";
+  else if(score>=3) message="👍 Baik! Tetapi masih perlu berhati-hati.";
+  else if(score>=1) message="⚖️ Sederhana. Semak sebelum beli.";
+  else if(score===0) message="⚠️ Berisiko. Anda perlu lebih berhati-hati.";
+  else message="❌ AMARAN! Pilihan anda berbahaya.";
+
+  document.getElementById("resultMessage").innerText = message + "\n\nWaspada Pembelian Ubat Dalam Talian.";
+  goTo('result');
+}
+
+function loadReview(){
+  const list = document.getElementById("reviewList");
+  list.innerHTML = "";
+
+  cart.forEach(c => {
+    let statusText = "";
+    let statusClass = ""; // Kita guna class CSS untuk warna
+    let icon = "";
+
+    switch(c.id){
+      case 1: case 2: case 5: case 9:
+        statusText = "Produk Berdaftar: Selamat untuk dibeli secara dalam talian.";
+        statusClass = "status-safe";
+        icon = "✅"; break;
+      case 3:
+        statusText = "Ubat Terkawal: Berdaftar, tetapi TIDAK BOLEH dijual secara online (perlu preskripsi).";
+        statusClass = "status-warning";
+        icon = "🚫"; break;
+      case 6:
+        statusText = "Kosmetik Bernotifikasi: Selamat dan sah di bawah KKM.";
+        statusClass = "status-safe";
+        icon = "✅"; break;
+      case 4: case 7: case 8: case 10:
+        statusText = "Bahaya: Produk tidak berdaftar/tiada NOT. Risiko bahan terlarang!";
+        statusClass = "status-danger";
+        icon = "❌"; break;
+    }
+
+    list.innerHTML += `
+      <div class="review-card ${statusClass}">
+        <div class="review-header">
+          <span class="review-icon">${icon}</span>
+          <span class="review-name">${c.name}</span>
+        </div>
+        <div class="review-body">
+          ${statusText}
+        </div>
+      </div>
+    `;
+  });
+}
+
+function resetGame(){
+  cart = [];
+  selectedProduct = null;
+  updateCartCount();
+}
+
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.style.display='none');
+  document.getElementById(page).style.display='block';
+  
+  if(page === 'cart') loadCart();
+  if(page === 'review') loadReview();
+}
+
+goTo('home'); loadHome();
+
+</script>
+</body>
+</html>
