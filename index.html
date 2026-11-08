@@ -390,7 +390,7 @@ button.secondary { background: #fff; color: #333; border: 1px solid #ccc; }
       <div id="cartList"></div>
 
       <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap; border-top:1px solid #eee; padding-top:16px;">
-        <button id="checkoutBtn" onclick="calculateScore()" style="flex:1;">Checkout Sekarang</button>
+        <button id="checkoutBtn" onclick="calculateScore()" style="flex:1;">Checkout</button>
         <button class="secondary" onclick="goTo('home')">Pilih Produk Lain</button>
       </div>
     </div>
@@ -530,9 +530,32 @@ const products = [
     price: "RM 85.00", 
     rating: "⭐ 4.2 (60)",
     isSafe: false, 
-    desc: `Kegunaan : Meningkatkan kekuatan dalaman lelaki\n• Tiada nombor pendaftaran sah KKM / tiada hologram keselamatan KKM\n• 100% bebas kesan sampingan\n• Terdapat gambar lelaki berotot pada label`, 
+    desc: `Kegunaan : Meningkatkan kekuatan dalaman lelaki\n• Tiada nombor pendaftaran sah KKM / tiada Pelekat Hologram FarmaTag\n• 100% bebas kesan sampingan\n• Terdapat gambar lelaki berotot pada label`, 
     img: "image/product10.png"
+  },
+  {
+    id: 11, 
+    name: "Krim Gatal Kulit", 
+    category: "Produk", 
+    catClass: "cat-produk",
+    price: "RM 15.00", 
+    rating: "⭐ 4.2 (1260)",
+    isSafe: true, 
+    desc: `Kegunaan : Melegakan Kegatalan Kulit - Ruam - Kemerahan - Kulit Kering\n• Ada nombor pendaftaran sah KKM\n• Ada Pelekat Hologram FarmaTag\n• Diperbuat dari herba semulajadi`, 
+    img: "image/product11.png"
+  },
+  {
+    id: 12, 
+    name: "Salap Luka HealFast", 
+    category: "Produk", 
+    catClass: "cat-produk",
+    price: "RM 18.00", 
+    rating: "⭐ 3.9 (51)",
+    isSafe: false, 
+    desc: `Kegunaan : Merawat jangkitan pada luka \n• Ada nombor pendaftaran sah KKM\n• Ada Pelekat Hologram FarmaTag\n• Mengandungi steroid (untuk kurangkan keradangan akibat dari jangkitan kuman)`, 
+    img: "image/product12.png"
   }
+
 ];
 
 let cart = [];
@@ -696,11 +719,11 @@ function loadReview(){
     let icon = "";
 
     switch(c.id){
-      case 1: case 2: case 9: 
+      case 1: case 2: case 9: case 11:
         statusText = "Produk Berdaftar (Kategori Am/OTC): Sah, ada hologram FarmaTag dan dibenarkan jual beli secara atas talian.";
         statusClass = "status-safe";
         icon = "✅"; break;
-      case 3:
+      case 3: case 12:
         statusText = "Ubat Terkawal (Preskripsi): Berdaftar KKM tetapi TIDAK BOLEH dijual secara runcit di platform e-dagang tanpa preskripsi doktor.";
         statusClass = "status-warning";
         icon = "⚠️"; break;
